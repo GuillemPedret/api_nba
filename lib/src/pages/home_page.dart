@@ -1,5 +1,5 @@
 import 'package:api_to_sqlite/src/providers/db_provider.dart';
-import 'package:api_to_sqlite/src/providers/employee_api_provider.dart';
+import 'package:api_to_sqlite/src/providers/players_api_provider.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,11 +16,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Api to sqlite'),
+        backgroundColor: Colors.blueAccent,
+        title: const Text('Best NBA players', style: TextStyle(fontWeight: FontWeight.bold),),
         centerTitle: true,
         actions: <Widget>[
           Container(
-            padding: const EdgeInsets.only(right: 10.0),
+            padding: const EdgeInsets.only(right: 5.0),
             child: IconButton(
               icon: const Icon(Icons.settings_input_antenna),
               onPressed: () async {
@@ -43,7 +44,22 @@ class _HomePageState extends State<HomePage> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : _buildEmployeeListView(),
+          :
+      Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              scale: 2.0,
+              opacity: 0.2,
+              image: AssetImage(
+                  'assets/images/NBA-logo.png'),
+            ),
+          ),
+        child: Container(
+          child:
+            _buildPlayersListView(),
+
+        )
+      )
     );
   }
 
@@ -52,8 +68,8 @@ class _HomePageState extends State<HomePage> {
       isLoading = true;
     });
 
-    var apiProvider = EmployeeApiProvider();
-    await apiProvider.getAllEmployees();
+    var apiProvider = PlayersApiProvider();
+    await apiProvider.getAllPlayers();
 
     // wait for 2 seconds to simulate loading of data
     await Future.delayed(const Duration(seconds: 2));
@@ -68,7 +84,7 @@ class _HomePageState extends State<HomePage> {
       isLoading = true;
     });
 
-    await DBProvider.db.deleteAllEmployees();
+    await DBProvider.db.deleteAllPlayers();
 
     // wait for 1 second to simulate loading of data
     await Future.delayed(const Duration(seconds: 1));
@@ -77,37 +93,37 @@ class _HomePageState extends State<HomePage> {
       isLoading = false;
     });
 
-    // ignore: avoid_print
-    print('All employees deleted');
   }
 
-  _buildEmployeeListView() {
+  _buildPlayersListView() {
     return FutureBuilder(
-      future: DBProvider.db.getAllEmployees(),
+      future: DBProvider.db.getAllPlayers(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return ListView.builder(
+              physics: BouncingScrollPhysics(),
+              itemCount: (snapshot.data.length),
+              padding: const EdgeInsets.all(16),
+              itemBuilder: (BuildContext context, int index) {
+                return Container (
+                  height: 100,
+                  padding: const EdgeInsets.all(10),
+                  decoration: const BoxDecoration(
+                    border: Border(bottom: BorderSide(color: Colors.redAccent, width: 1.0)),
+                    color: Colors.transparent,
+                  ),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.fromLTRB(10.0, 6.0, 10.0, 6.0),
+                    leading: Text(
+                      "${index + 1}",
+                      style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                    ),
+                    title: Text("${snapshot.data[index].name}", style: const TextStyle(fontSize: 19.0, fontWeight: FontWeight.bold),),
+                    subtitle: Text('${snapshot.data[index].team}', style: const TextStyle(fontWeight: FontWeight.bold),),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(70.0)),
+                  ),
+                );
+              }
           );
-        } else {
-          return ListView.separated(
-            separatorBuilder: (context, index) => const Divider(
-              color: Colors.black12,
-            ),
-            itemCount: snapshot.data.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                leading: Text(
-                  "${index + 1}",
-                  style: const TextStyle(fontSize: 20.0),
-                ),
-                title: Text(
-                    "Name: ${snapshot.data[index].firstName} ${snapshot.data[index].lastName} "),
-                subtitle: Text('EMAIL: ${snapshot.data[index].email}'),
-              );
-            },
-          );
-        }
       },
     );
   }
