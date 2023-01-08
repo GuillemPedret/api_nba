@@ -36,8 +36,8 @@ class DBProvider {
         });
   }
 
-  // Insert employee on database
-  createEmployee(Players newPlayer) async {
+  // Insert players on database
+  createPlayers(Players newPlayer) async {
     await deleteAllPlayers();
     final db = await database;
     final res = await db?.insert('Players', newPlayer.toJson());
@@ -45,7 +45,7 @@ class DBProvider {
     return res;
   }
 
-  // Delete all employees
+  // PLayers all employees
   Future<int?> deleteAllPlayers() async {
     final db = await database;
     final res = await db?.rawDelete('DELETE FROM Players');

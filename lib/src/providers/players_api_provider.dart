@@ -7,7 +7,7 @@ class PlayersApiProvider {
     var url = "https://63b311e2ea89e3e3db3d301c.mockapi.io/players/v1/players";
     Response response = await Dio().get(url);
     return (response.data as List).map((players) {
-      DBProvider.db.createEmployee(Players.fromJson(players));
+      DBProvider.db.createPlayers(Players.fromJson(players));
     }).toList();
   }
 
