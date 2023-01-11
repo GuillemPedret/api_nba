@@ -112,9 +112,9 @@ class DBProvider {
     return tmp;
   }
 
-  insertNewPlayer(String name, String avatar, String team) async {
+  insertNewPlayer(String name, String avatar, String team, String id) async {
     final db = await database;
-    db?.rawInsert('INSERT INTO Players(name, avatar, team) VALUES("' + name + '", "' + avatar + '", "' + team + '")');
+    db?.rawInsert('INSERT INTO PLAYERS(name, avatar, team, id) VALUES("' + name + '", "' + avatar + '", "' + team + '", "' + id + '")');
   }
 
 

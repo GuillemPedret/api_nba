@@ -1,3 +1,5 @@
+import 'package:api_to_sqlite/src/pages/add_player.dart';
+import 'package:api_to_sqlite/src/pages/modify_player.dart';
 import 'package:api_to_sqlite/src/providers/db_provider.dart';
 import 'package:api_to_sqlite/src/providers/players_api_provider.dart';
 import 'package:flutter/material.dart';
@@ -44,9 +46,9 @@ class _HomePageState extends State<HomePage> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          :
+         :
       Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               scale: 2.0,
               opacity: 0.2,
@@ -59,7 +61,17 @@ class _HomePageState extends State<HomePage> {
             _buildPlayersListView(),
 
         )
-      )
+      ),
+        floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddPlayer()),
+          );
+        },
+        backgroundColor: Colors.redAccent,
+          child: Icon(Icons.add),
+    ),
     );
   }
 
@@ -120,6 +132,14 @@ class _HomePageState extends State<HomePage> {
                     title: Text("${snapshot.data[index].name}", style: const TextStyle(fontSize: 19.0, fontWeight: FontWeight.bold),),
                     subtitle: Text('${snapshot.data[index].team}', style: const TextStyle(fontWeight: FontWeight.bold),),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(70.0)),
+                    onTap:(){
+                      print(snapshot.data[index].name);
+                      Navigator.pushNamed(
+                        context,
+                        'modify',
+                        arguments: {'name': snapshot.data[index].name, 'team': snapshot.data[index].team, 'avatar': snapshot.data[index].avatar, 'id': snapshot.data[index].id}
+                      );
+                    },
                   ),
                 );
               }
